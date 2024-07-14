@@ -21,6 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    // 音声アップロード
+
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
     await fs.mkdir(uploadDir, { recursive: true });
 
@@ -45,6 +47,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const fileName = `audio_${Date.now()}${path.extname(file.originalFilename || '')}`;
     const filePath = path.join(uploadDir, fileName);
     await fs.rename(file.filepath, filePath);
+
+    // 文字起こし
 
     // ファイルを読み込む
     const fileBuffer = await fs.readFile(filePath);
