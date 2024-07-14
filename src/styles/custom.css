@@ -1,0 +1,25 @@
+.text-gradient {
+    background: linear-gradient(to right, #9f7aea, #f687b3, #fc8181);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.popover-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid white;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.dark .popover-arrow {
+  border-top-color: #2d3748; /* dark:bg-gray-800 */
+}
+
+textarea:focus {
+  outline: none;
+  border-color: transparent; /* Custom border color on focus */
+  box-shadow: 0 0 0 1px #a0aec0; /* Custom shadow color on focus */
+}
