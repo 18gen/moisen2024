@@ -77,7 +77,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="relative bg-gray-200 p-6 rounded-lg shadow-lg w-5/6 max-w-5/6 flex flex-col items-center">
+      <div className="relative bg-gray-200 p-6 rounded-lg shadow-lg w-5/6 max-w-5/6 h-5/6 flex flex-col items-center">
         {typeof window !== 'undefined' && <AudioRecorder ref={audioRecorderRef} onStop={handleStopRecording} />}
         <div className="flex items-center justify-between w-full flex-wrap mb-4">
           <ol className="flex items-center w-full sm:w-3/5 text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base mb-4 sm:mb-0">
@@ -107,9 +107,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
             <span className="whitespace-nowrap text-sm ml-1">キャンセルして閉じる</span>
           </button>
         </div>
-        
+        {currentStep == 1  && (
+        <h2 className="text-gradient text-xl text-bold text-center p-2">会話を録音しています...</h2>
+        )}
+        {currentStep == 2  && (
+        <h2 className="text-gradient text-xl text-bold text-center p-2">内容を確認して要約しましょう...</h2>
+        )}
         {currentStep < 3 ? (
-          <div className="mt-8 flex flex-col space-y-4 items-center w-full">
+          <div className="mt-4 flex flex-col space-y-4 items-center w-full">
             <div className="bg-white p-4 rounded-lg shadow-md w-full flex flex-col items-center">
               <h2 className="text-gray-500 text-xl mb-4">診療メモ</h2>
               <textarea 
