@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Modal from "./components/Modal";
+import externalApiClient from "@/lib/externalApiClient";
 import Summarization from "./components/Summarization";
 
 export default function Page() {
