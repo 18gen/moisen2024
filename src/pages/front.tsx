@@ -1,4 +1,4 @@
-import './styles/tailwind.css';
+import '../app/globals.css';
 import React from 'react';
 
 const FrontPage: React.FC = () => {
