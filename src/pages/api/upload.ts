@@ -1,4 +1,3 @@
-// pages/api/upload.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import formidable from 'formidable';
 import fs from 'fs/promises';
@@ -22,7 +21,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // 音声アップロード
-
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
     await fs.mkdir(uploadDir, { recursive: true });
 
@@ -32,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       maxFileSize: 10 * 1024 * 1024, // 10MB limit
     });
 
-    const [fields, files] = await new Promise<[formidable.Fields<string>, formidable.Files]>((resolve, reject) => {
+    const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) reject(err);
         resolve([fields, files]);
@@ -49,23 +47,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await fs.rename(file.filepath, filePath);
 
     // 文字起こし
-
-    // ファイルを読み込む
     const fileBuffer = await fs.readFile(filePath);
 
-    // ChatGPTに送信するためのFormDataを作成
     const formData = new FormData();
     formData.append('file', fileBuffer, {
       filename: fileName,
       contentType: file.mimetype || 'audio/webm',
     });
     formData.append('model', 'whisper-1');
-
-    // プロンプトを追加（文字列リテラル）
     formData.append('prompt', 'この音声を日本語に文字起こししてください。');
 
-    console.log(process.env.OPENAI_API_KEY);
-    // ChatGPT APIを呼び出し
     const openaiResponse = await axios.post('https://api.openai.com/v1/audio/transcriptions', formData, {
       headers: {
         ...formData.getHeaders(),
@@ -74,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     // アップロードしたファイルを削除
-    // await fs.unlink(filePath);
+    await fs.unlink(filePath);
 
     res.status(200).json({
       message: 'File uploaded and transcribed successfully',
