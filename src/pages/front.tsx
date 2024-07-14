@@ -1,7 +1,7 @@
 import './styles/tailwind.css';
 import React from 'react';
 
-const App: React.FC = () => {
+const FrontPage: React.FC = () => {
   return (
     <div className="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
       <div className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 p-2 rounded-full shadow-lg">
@@ -21,4 +21,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default FrontPage;
