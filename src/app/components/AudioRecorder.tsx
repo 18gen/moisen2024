@@ -41,7 +41,7 @@ const AudioRecorder: React.FC = () => {
     }
   };
 
-  const uploadAudio = async () => {
+  const uploadAudioAndTranscribe = async () => {
     if (!audioBlob) {
       setUploadStatus('No audio to upload');
       return;
@@ -57,7 +57,9 @@ const AudioRecorder: React.FC = () => {
       const response = await axios.post('/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      setUploadStatus('Upload successful: ' + response.data.filename);
+
+      // 文字起こし結果は transcription に入っている
+      setUploadStatus('Upload successful: ' + response.data.transcription);
     } catch (error) {
       console.error('Error uploading audio:', error);
       setUploadStatus('Upload failed');
@@ -72,7 +74,7 @@ const AudioRecorder: React.FC = () => {
         {isRecording ? 'Stop Recording' : 'Start Recording'}
       </button>
       {audioBlob && (
-        <button onClick={uploadAudio} disabled={isRecording || isUploading}>
+        <button onClick={uploadAudioAndTranscribe} disabled={isRecording || isUploading}>
           Upload Recording
         </button>
       )}
