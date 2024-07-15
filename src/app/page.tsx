@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import axios from 'axios';
 import Modal from "./components/Modal";
 import Image from 'next/image';
 
@@ -28,6 +29,17 @@ export default function Page() {
     setIsModalOpen(false);
   };
 
+  const notify = async (message: string): Promise<void> => {
+    try {
+      const response = await axios.post('/api/notify', { message });
+      if (response.status !== 200) {
+        throw new Error('Failed to send message to LINE');
+      }
+    } catch (error) {
+      console.error('Error sending to LINE:', error);
+    }
+  };
+
   return (
     <div className="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
       <div className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 p-2 rounded-full shadow-lg">
@@ -45,6 +57,7 @@ export default function Page() {
         setIsRecording={setIsRecording}
         onClose={closeModal} 
         onProceed={proceedToSummarization} 
+        notify={notify}
         isSummarized={isSummarized}
         recordedText={recordedText}
         inputText={inputText}
