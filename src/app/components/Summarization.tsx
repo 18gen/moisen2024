@@ -1,6 +1,5 @@
 import "@/styles/globals.css";
-import SummarizeComponent from "./summarizeComponent";
-import {Summaries} from "@/pages/api/summarize";
+import { Summaries } from "@/pages/api/summarize";
 
 interface SummarizationProps {
   recordedText: string;
@@ -26,7 +25,7 @@ const Summarization: React.FC<SummarizationProps> = ({ recordedText, summarizedT
           <h3 className="text-gray-400 mb-2 font-bold text-center">患者向け</h3>
           <textarea
             className="w-full h-40 border border-none rounded p-2 text-slate-900"
-            defaultValue={summarizedText.forPatientOrKeyPerson}
+            defaultValue={summarizedText.forPatient}
             readOnly
           />
         </div>
