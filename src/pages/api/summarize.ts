@@ -1,6 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
+export type Summaries = {
+  forDoctor: string;
+  forPatientOrKeyPerson: string;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
@@ -44,9 +49,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     );
 
     const summaryContent = response.data.choices[0].message.content.trim();
-    let summaries;
+    let summaries: Summaries | undefined;
     try {
       summaries = JSON.parse(summaryContent);
+
+      if (summaries === undefined) {
+        throw new Error("failed to summarize.");
+      }
     } catch (error) {
       console.error('Error parsing JSON from API response:', error);
       return res.status(500).json({ message: 'Error processing API response' });

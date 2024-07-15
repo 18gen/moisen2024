@@ -20,7 +20,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
   const [showSecondTextArea, setShowSecondTextArea] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [recordedText, setRecordedText] = useState("");
-  const [summarizedText, setSummarizedText] = useState("");
+  const [summarizedText, setSummarizedText] = useState({ forDoctor: '', forPatientOrKeyPerson: '' });
   const audioRecorderRef = useRef<any>(null);
 
   useEffect(() => {
