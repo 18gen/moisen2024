@@ -20,10 +20,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
   const [showSecondTextArea, setShowSecondTextArea] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [recordedText, setRecordedText] = useState("");
-  const [summarizedText, setSummarizedText] = useState({
-    forDoctor: { subject: '', object: '', assessment: '', plan: '' },
-    forPatient: { diagnosis: '', lifestyle: '', prescription: '' }
-  });
+  const [summarizedText, setSummarizedText] = useState({ forDoctor: '', forPatient: '' });
   const audioRecorderRef = useRef<any>(null);
 
   useEffect(() => {
@@ -38,6 +35,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
       setCurrentStep(2);
       audioRecorderRef.current.stopRecording();
     } else if (currentStep === 2) {
+      setRecordedText("");
+      setInputValue("");
       setCurrentStep(3);
       try {
         const response = await axios.post('/api/summarize', { text: inputValue });
@@ -57,6 +56,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
     setInputValue("");
     setShowSecondTextArea(false);
     setCurrentStep(1);
+    setSummarizedText({ forDoctor: '', forPatient: '' });
     onClose();
   };
 
@@ -111,18 +111,18 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
             <span className="whitespace-nowrap text-sm ml-1">キャンセルして閉じる</span>
           </button>
         </div>
-        {currentStep == 1  && (
-        <h2 className="text-gradient text-xl text-bold text-center p-2">会話を録音しています...</h2>
+        {currentStep == 1 && (
+          <h2 className="text-gradient text-xl text-bold text-center p-2">会話を録音しています...</h2>
         )}
-        {currentStep == 2  && (
-        <h2 className="text-gradient text-xl text-bold text-center p-2">内容確認後、要約開始！</h2>
+        {currentStep == 2 && (
+          <h2 className="text-gradient text-xl text-bold text-center p-2">内容確認後、要約開始！</h2>
         )}
         {currentStep < 3 ? (
           <div className="mt-4 flex flex-col space-y-4 items-center w-full">
             <div className="bg-white p-4 rounded-lg shadow-md w-full flex flex-col items-center">
               <h2 className="text-gray-500 text-xl mb-4">診療メモ</h2>
               <textarea 
-                className="w-full h-full border border-transparent rounded p-2 text-slate-900"
+                className="w-full max-h-24 border border-transparent rounded p-2 text-slate-900"
                 placeholder="ここに会話以外の内容を入力してください..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
@@ -132,7 +132,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
               <div className="bg-white p-4 rounded-lg shadow-md w-full flex flex-col items-center">
                 <h2 className="text-gray-500 text-xl mb-4">録音内容</h2>
                 <textarea 
-                  className="w-full h-full border border-transparent rounded p-2 text-slate-900"
+                  className="w-full max-h-40 border border-transparent rounded p-2 text-slate-900"
                   placeholder="会話の内容はここに表示されます..."
                   value={recordedText}
                   readOnly
@@ -145,7 +145,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
         )}
         
         <div className="mt-6 relative">
-          <div className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 p-2 rounded-full shadow-lg">
+          <div className={`p-2 rounded-full shadow-lg ${currentStep < 3 ? 'bg-gradient-to-r from-purple-400 via-pink-500 to-red-500' : 'bg-gradient-to-r from-green-300 via-lime-500 to-green-500'}`}>
             <button
               className="bg-transparent text-white font-bold py-1 px-5 rounded-full flex items-center space-x-2"
               onClick={() => {
@@ -166,7 +166,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
                   <span className="whitespace-nowrap">要約する</span>
                 )
               ) : (
-                <span className="whitespace-nowrap">保存する</span>
+                <span className="whitespace-nowrap">LINE 送信して閉じる</span>
               )}
             </button>
           </div>

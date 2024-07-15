@@ -21,15 +21,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: "gpt-3.5-turbo",
+        model: "gpt-4-turbo",
         messages: [
           { role: "system", content: "You are a helpful assistant that provides multiple summaries of text." },
-          { role: "user", content: `あなたはクリニックの整形外科医です。診察の会話記録とあなたの医療ノートから、あなた自身とクリニックの他の医師に対してわかりやすい要約を日本語で提供してください。タイトルは１行づつ太文字で。
+          { role: "user", content: 
+          `あなたはクリニックの整形外科医です。診察の会話記録とあなたの医療ノートから、あなた自身とクリニックの他の医師に対してわかりやすい要約を日本語で提供してください。
+          それぞれの項目は行で分けてください。
+
             forDoctor:
-            Subject（主観的情報）/n
-            Object（客観的情報）/n
-            Assessment（評価） /n
-            Plan（計画・治療） /n
+            Subject（主観的情報）
+            Object（客観的情報）
+            Assessment（評価）
+            Plan（計画・治療）
 
             forPatient:
             診断内容

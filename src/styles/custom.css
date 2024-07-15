@@ -23,3 +23,25 @@ textarea:focus {
   border-color: transparent; /* Custom border color on focus */
   box-shadow: 0 0 0 1px #a0aec0; /* Custom shadow color on focus */
 }
+
+.popover-content {
+  max-height: 80vh; /* Adjust the height as needed */
+  overflow-y: auto;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.popover-header, .popover-body {
+  margin-bottom: 1rem;
+}
+
+.popover-header {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.popover-body {
+  font-size: 1rem;
+}
