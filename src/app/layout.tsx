@@ -5,8 +5,8 @@ import "@/styles/globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "みんなの仲間",
-  description: "私たちはみんなの仲間です",
+  title: "みんなの味方",
+  description: "私たちはみんなの味方です",
 };
 
 export default function RootLayout({

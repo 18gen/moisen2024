@@ -13,7 +13,7 @@ interface ModalProps {
   setIsRecording: (isRecording: boolean) => void;
   onClose: () => void;
   onProceed: (data: { inputText: string, recordedText: string }) => void;
-  notify: (message: string) => Promise<void>; // Add this line
+  notify: (message: string) => Promise<void>;
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onClose, onProceed, notify }) => {
@@ -23,6 +23,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
   const [recordedText, setRecordedText] = useState("");
   const [summarizedText, setSummarizedText] = useState({ forDoctor: '', forPatient: '' });
   const audioRecorderRef = useRef<any>(null);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   useEffect(() => {
     if (isOpen && typeof window !== 'undefined' && isRecording) {
@@ -36,23 +37,26 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
       setCurrentStep(2);
       audioRecorderRef.current.stopRecording();
     } else if (currentStep === 2) {
-      setRecordedText("");
-      setInputValue("");
-      setCurrentStep(3);
+      setIsProcessing(true);
       try {
         const response = await axios.post('/api/summarize', { transcribedText: recordedText, text: inputValue });
         const summary = response.data.summaries;
-        console.log("summary here !!!", summary);
         setSummarizedText(summary);
       } catch (error) {
         console.error('Error during summarization:', error);
+      } finally {
+        setIsProcessing(false);
       }
+      setCurrentStep(3);
     } else {
+      setIsProcessing(true);
       try {
         const message = `${summarizedText.forPatient}`;
         await notify(message);
       } catch (error) {
         console.error('Error sending to LINE:', error);
+      } finally {
+        setIsProcessing(false);
       }
       onProceed({ inputText: inputValue, recordedText });
       handleReset();
@@ -77,10 +81,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
       });
 
       const transcription = response.data.transcription;
-      setRecordedText(transcription || ""); // Set to empty string if no transcription
+      setRecordedText(transcription || "");
     } catch (error) {
       console.error('Error uploading audio:', error);
-      setRecordedText(""); // Ensure recordedText is empty on error
+      setRecordedText("");
     }
   };
 
@@ -129,7 +133,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
             <div className="bg-white p-4 rounded-lg shadow-md w-full flex flex-col items-center">
               <h2 className="text-gray-500 text-xl mb-4">診療メモ</h2>
               <textarea 
-                className="w-full max-h-24 border border-transparent rounded p-2 text-slate-900"
+                className="w-full h-24 border border-transparent rounded p-2 text-slate-900"
                 placeholder="ここに会話以外の内容を入力してください..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
@@ -139,7 +143,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
               <div className="bg-white p-4 rounded-lg shadow-md w-full flex flex-col items-center">
                 <h2 className="text-gray-500 text-xl mb-4">録音内容</h2>
                 <textarea 
-                  className="w-full max-h-40 border border-transparent rounded p-2 text-slate-900"
+                  className="w-full h-40 border border-transparent rounded p-2 text-slate-900"
                   placeholder="会話の内容はここに表示されます..."
                   value={recordedText}
                   readOnly
@@ -162,6 +166,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
                 }
                 handleProceed();
               }}
+              disabled={isProcessing}
             >
               {currentStep < 3 ? (
                 currentStep === 1 ? (
@@ -170,10 +175,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
                     <span className="whitespace-nowrap">録音停止</span>
                   </>
                 ) : (
-                  <span className="whitespace-nowrap">要約する</span>
+                  <span className="whitespace-nowrap">{isProcessing ? "書き出し中" : "要約する"}</span>
                 )
               ) : (
-                <span className="whitespace-nowrap">LINE 送信して閉じる</span>
+                <span className="whitespace-nowrap">{isProcessing ? "記入内容を要約中..." : "LINE 送信して閉じる"}</span>
               )}
             </button>
           </div>
