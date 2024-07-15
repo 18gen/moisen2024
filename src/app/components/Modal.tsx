@@ -39,7 +39,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
       setInputValue("");
       setCurrentStep(3);
       try {
-        const response = await axios.post('/api/summarize', { text: inputValue });
+        const response = await axios.post('/api/summarize', { transcribedText: recordedText, text: inputValue });
         const summary = response.data.summaries;
         console.log("summary here !!!", summary);
         setSummarizedText(summary);
