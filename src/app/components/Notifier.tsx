@@ -65,7 +65,7 @@ const LineNotifyComponent: React.FC = () => {
         setIsRecording={setIsRecording}
         onClose={() => setIsModalOpen(false)}
         onProceed={() => setIsModalOpen(false)}
-        notify={notify}
+        notify={notify}  {/* Pass notify function here */}
       />
     </div>
   );
