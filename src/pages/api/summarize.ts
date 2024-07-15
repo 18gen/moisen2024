@@ -3,8 +3,8 @@ import axios from 'axios';
 
 export type Summaries = {
   forDoctor: string;
-  forPatientOrKeyPerson: string;
-}
+  forPatient: string;
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -24,19 +24,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         model: "gpt-3.5-turbo",
         messages: [
           { role: "system", content: "You are a helpful assistant that provides multiple summaries of text." },
-          { role: "user", content: `以下の文章について、3つの異なる要約を提供してください：
-1. 簡潔な要約（50文字以内）
-2. 詳細な要約（200文字程度）
-3. 重要なポイントを箇条書きにした要約（5点程度）
+          { role: "user", content: `あなたはクリニックの整形外科医です。診察の会話記録とあなたの医療ノートから、あなた自身とクリニックの他の医師に対してわかりやすい要約を日本語で提供してください。タイトルは１行づつ太文字で。
+            forDoctor:
+            Subject（主観的情報）/n
+            Object（客観的情報）/n
+            Assessment（評価） /n
+            Plan（計画・治療） /n
 
-文章：${text}
+            forPatient:
+            診断内容
+            過ごし方
+            処方箋
 
-回答は以下のJSON形式で提供してください：
-{
-  "brief": "簡潔な要約をここに",
-  "detailed": "詳細な要約をここに",
-  "bulletPoints": ["ポイント1", "ポイント2", "ポイント3", "ポイント4", "ポイント5"]
-}` }
+            文章：${text}
+
+            回答は以下のJSON形式で提供してください：
+            {
+              "forDoctor": "ここに forDoctor 向けの要約を書いてください",
+              "forPatient": "ここに forPatient 向けの要約を書いてください"
+            }` }
         ],
         max_tokens: 500
       },
