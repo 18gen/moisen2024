@@ -21,12 +21,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: "gpt-4-turbo",
+        model: "gpt-3.5-turbo",
         messages: [
           { role: "system", content: "You are a helpful assistant that provides multiple summaries of text." },
-          { role: "user", content: 
-          `あなたはクリニックの整形外科医です。診察の会話記録とあなたの医療ノートから、あなた自身とクリニックの他の医師に対してわかりやすい要約を日本語で提供してください。
-          それぞれの項目は行で分けてください。
+          {
+            role: "user", content: `
+            あなたはクリニックの整形外科医です。診察の会話記録とあなたの医療ノートから、あなた自身とクリニックの他の医師に対してわかりやすい要約を日本語で提供してください。
+            それぞれの項目は行で分けてください。
 
             forDoctor:
             Subject（主観的情報）
@@ -45,7 +46,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             {
               "forDoctor": "ここに forDoctor 向けの要約を書いてください",
               "forPatient": "ここに forPatient 向けの要約を書いてください"
-            }` }
+            }`
+          }
         ],
         max_tokens: 500
       },
@@ -56,14 +58,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
     );
+    console.log("response here", response);
+    if (response.status !== 200) {
+      throw new Error(`OpenAI API responded with status ${response.status}: ${response.statusText}`);
+    }
 
-    const summaryContent = response.data.choices[0].message.content.trim();
-    let summaries: Summaries | undefined;
+    const summaryContent = response.data.choices[0]?.message?.content?.trim();
+    if (!summaryContent) {
+      throw new Error("Invalid response from OpenAI API");
+    }
+
+    let summaries: Summaries;
     try {
       summaries = JSON.parse(summaryContent);
 
-      if (summaries === undefined) {
-        throw new Error("failed to summarize.");
+      if (typeof summaries.forDoctor !== 'string' || typeof summaries.forPatient !== 'string') {
+        throw new Error("Invalid summary format.");
       }
     } catch (error) {
       console.error('Error parsing JSON from API response:', error);
@@ -76,6 +86,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   } catch (error) {
     console.error('Error summarizing text:', error);
-    res.status(500).json({ message: 'Error summarizing text' });
+    res.status(500).json({ message: error.message });
   }
 }
