@@ -20,7 +20,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
   const [showSecondTextArea, setShowSecondTextArea] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [recordedText, setRecordedText] = useState("");
-  const [summarizedText, setSummarizedText] = useState({ forDoctor: '', forPatientOrKeyPerson: '' });
+  const [summarizedText, setSummarizedText] = useState({
+    forDoctor: { subject: '', object: '', assessment: '', plan: '' },
+    forPatient: { diagnosis: '', lifestyle: '', prescription: '' }
+  });
   const audioRecorderRef = useRef<any>(null);
 
   useEffect(() => {
@@ -38,7 +41,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
       setCurrentStep(3);
       try {
         const response = await axios.post('/api/summarize', { text: inputValue });
-        const summary = response.data.summaries.detailed;
+        const summary = response.data.summaries;
+        console.log("summary here !!!", summary);
         setSummarizedText(summary);
       } catch (error) {
         console.error('Error during summarization:', error);
@@ -111,7 +115,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
         <h2 className="text-gradient text-xl text-bold text-center p-2">会話を録音しています...</h2>
         )}
         {currentStep == 2  && (
-        <h2 className="text-gradient text-xl text-bold text-center p-2">内容を確認して要約しましょう...</h2>
+        <h2 className="text-gradient text-xl text-bold text-center p-2">内容確認後、要約開始！</h2>
         )}
         {currentStep < 3 ? (
           <div className="mt-4 flex flex-col space-y-4 items-center w-full">
