@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Modal from './Modal';
 
 const LineNotifyComponent: React.FC = () => {
   const [message, setMessage] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [status, setStatus] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
 
   const notify = async (text: string): Promise<void> => {
     const response = await axios.post('/api/notify', { message: text });
@@ -54,6 +57,16 @@ const LineNotifyComponent: React.FC = () => {
         </button>
       </div>
       {status && <p className="text-sm text-center text-gray-600">{status}</p>}
+
+      {/* Add the Modal component and pass the notify function */}
+      <Modal
+        isOpen={isModalOpen}
+        isRecording={isRecording}
+        setIsRecording={setIsRecording}
+        onClose={() => setIsModalOpen(false)}
+        onProceed={() => setIsModalOpen(false)}
+        notify={notify}
+      />
     </div>
   );
 };

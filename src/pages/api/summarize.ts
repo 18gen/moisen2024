@@ -12,9 +12,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { text } = req.body;
+    const { transcribedText, text } = req.body;
 
-    if (!text || typeof text !== 'string') {
+    if ((!text && !transcribedText) || (text === undefined && transcribedText === undefined)) {
       return res.status(400).json({ message: 'Invalid or missing text in the request body' });
     }
 
@@ -40,7 +40,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             過ごし方
             処方箋
 
-            文章：${text}
+            文章
+            ${transcribedText}
+            ${text}
 
             回答は以下のJSON形式で提供してください：
             {

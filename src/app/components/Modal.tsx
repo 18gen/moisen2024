@@ -13,9 +13,10 @@ interface ModalProps {
   setIsRecording: (isRecording: boolean) => void;
   onClose: () => void;
   onProceed: (data: { inputText: string, recordedText: string }) => void;
+  notify: (message: string) => Promise<void>; // Add this line
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onClose, onProceed }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onClose, onProceed, notify }) => {
   const [inputValue, setInputValue] = useState("");
   const [showSecondTextArea, setShowSecondTextArea] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -39,7 +40,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
       setInputValue("");
       setCurrentStep(3);
       try {
-        const response = await axios.post('/api/summarize', { text: inputValue });
+        const response = await axios.post('/api/summarize', { transcribedText: recordedText, text: inputValue });
         const summary = response.data.summaries;
         console.log("summary here !!!", summary);
         setSummarizedText(summary);
@@ -47,6 +48,12 @@ const Modal: React.FC<ModalProps> = ({ isOpen, isRecording, setIsRecording, onCl
         console.error('Error during summarization:', error);
       }
     } else {
+      try {
+        const message = `${summarizedText.forPatient}`;
+        await notify(message);
+      } catch (error) {
+        console.error('Error sending to LINE:', error);
+      }
       onProceed({ inputText: inputValue, recordedText });
       handleReset();
     }
