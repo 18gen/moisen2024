@@ -1,6 +1,6 @@
 ## 制作物
 
-https://protopedia.net/event/105
+[医師と患者、患者の家族をつなぐプロダクト「今日どうだった？」](https://protopedia.net/prototype/5478)
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
