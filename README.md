@@ -2,7 +2,7 @@
 
 ## Product
 [ProtoPedia展示ページ](https://protopedia.net/prototype/5478)
-(**"How was today?"** that connects doctors, patients, and their families)
+(**"How was your day?"** that connects doctors, patients, and their families)
 
 This product records conversations from medical consultations and summarizes them, allowing the patient, their family, and the doctor to share the information, enhancing understanding of the consultation results.
 <p align="center"><img width="800" alt="stack" src="https://github.com/user-attachments/assets/2b435dad-56cc-405c-b05c-9c989c5c4022"></p>
